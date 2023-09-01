@@ -2,7 +2,7 @@ import WelcomeBanner from "../partials/dashboard/WelcomeBanner";
 import DashboardAvatars from "../partials/dashboard/DashboardAvatars";
 import FilterButton from "../components/DropdownFilter";
 import Datepicker from "../components/Datepicker";
-import AddModal from "../partials/testimonials/AddModal";
+import AddModal from "../partials/placement/AddModal";
 import Banner from "../partials/Banner";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -18,9 +18,10 @@ const Placements = () => {
 
   useEffect(() => {
     axios
-      .get(`${baseUrl}api/test/`)
+      .get(`${baseUrl}api/alumni/`)
       .then((res) => {
         setTest(res.data);
+        console.log(res.data);
       })
       .catch((e) => {
         console.log(e);

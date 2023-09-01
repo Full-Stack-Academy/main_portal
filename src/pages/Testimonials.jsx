@@ -2,11 +2,10 @@ import WelcomeBanner from "../partials/dashboard/WelcomeBanner";
 import DashboardAvatars from "../partials/dashboard/DashboardAvatars";
 import FilterButton from "../components/DropdownFilter";
 import Datepicker from "../components/Datepicker";
-import AddModal from "../partials/testimonials/AddModal";
+import AddModal from "../partials/placement/AddModal";
 import Banner from "../partials/Banner";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import EditModal from "../partials/testimonials/EditModal";
 
 const Testimonials = () => {
   const [test, setTest] = useState([]);
@@ -35,7 +34,6 @@ const Testimonials = () => {
   return (
     <>
       {addDis && <AddModal dis={addDis} setDis={setAddDis} />}
-      {editDis && <EditModal dis={editDis} setDis={setEditDis} data={testS} />}
       <main>
         <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
           {/* Dashboard actions */}

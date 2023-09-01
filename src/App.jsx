@@ -10,14 +10,13 @@ import "./charts/ChartjsConfig";
 // Import pages
 import Dashboard from "./pages/Dashboard";
 import Testimonials from "./pages/Testimonials";
-import Signin from "./pages/Signin";
 import Register from "./pages/Register";
+import Placements from "./pages/Placements";
 
 function App() {
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const navigate = useNavigate();
 
   useEffect(() => {
     document.querySelector("html").style.scrollBehavior = "auto";
@@ -25,39 +24,23 @@ function App() {
     document.querySelector("html").style.scrollBehavior = "";
   }, [location.pathname]); // triggered on route change
 
-  useEffect(() => {
-    let tkn = localStorage.getItem("token");
-    if (tkn) {
-      setIsLoggedIn(true);
-      navigate("/");
-    } else {
-      navigate("/signin");
-    }
-  }, [isLoggedIn]);
-
   return (
     <>
-      {isLoggedIn ? (
-        <div className="flex h-screen overflow-hidden">
-          {/* Sidebar */}
-          <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-          {/* Content area */}
-          <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
-            {/*  Site header */}
-            <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-            <Routes>
-              <Route exact path="/" element={<Dashboard />} />
-              <Route exact path="/testimonials" element={<Testimonials />} />
-            </Routes>
-            {/* <Banner /> */}
-          </div>
+      <div className="flex h-screen overflow-hidden">
+        {/* Sidebar */}
+        <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+        {/* Content area */}
+        <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
+          {/*  Site header */}
+          <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+          <Routes>
+            <Route exact path="/" element={<Dashboard />} />
+            <Route exact path="/testimonials" element={<Testimonials />} />
+            <Route exact path="/placements" element={<Placements />} />
+          </Routes>
+          {/* <Banner /> */}
         </div>
-      ) : (
-        <Routes>
-          <Route exact path="/signin" element={<Signin setIsLoggedIn={setIsLoggedIn} />} />
-          <Route exact path="/register" element={<Register />} />
-        </Routes>
-      )}
+      </div>
     </>
   );
 }
