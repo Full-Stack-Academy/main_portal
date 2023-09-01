@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import EditModal from "../partials/testimonials/EditModal";
 
-const Testimonials = () => {
+const Placements = () => {
   const [test, setTest] = useState([]);
   const [addDis, setAddDis] = useState(false);
   const [editDis, setEditDis] = useState(false);
@@ -259,4 +259,4 @@ const Testimonials = () => {
   );
 };
 
-export default Testimonials;
+export default Placements;

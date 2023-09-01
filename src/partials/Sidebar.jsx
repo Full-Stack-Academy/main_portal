@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 
 import SidebarLinkGroup from "./SidebarLinkGroup";
 import logo from "../images/fsa_logo_white.png";
