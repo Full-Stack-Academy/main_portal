@@ -1,37 +1,42 @@
 import axios from "axios";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { initializeApp } from "firebase/app";
+import "firebase/storage";
+import { firebaseConfig } from "../../utils/firebaseConfig";
+const firebaseApp = initializeApp(firebaseConfig);
+const storage = getStorage(firebaseApp); // Initialize Firebase Storage
 
 const AddModal = ({ dis, setDis }) => {
   const [name, setName] = useState("");
   const [position, setPosition] = useState("");
   const [course, setCourse] = useState("");
-  const [image, setImage] = useState(null);
+  const [imageUrl, setImageUrl] = useState(null);
   const [company, setCompany] = useState("");
-  const [companyImg, setCompanyImg] = useState("");
+  const [companyID, setCompanyID] = useState("");
+  const [companyImgUrl, setCompanyImgUrl] = useState("");
   const [pckg, setPckg] = useState("");
-  const [linkedIn, setLinkedIn] = useState("");
+  const [linkedIn, setLinkedIn] = useState("https://linkedin.com/in");
   const [submit, setSubmit] = useState(false);
+  const [btn, setBtn] = useState(false);
+  const [companies, setCompanies] = useState([]);
   const baseUrl = import.meta.env.VITE_API_URL;
 
   const addAlumni = () => {
     const alumni = {
       name,
-      image,
+      image: imageUrl,
       position,
       package: pckg,
       company,
       course,
-      companyImg,
+      companyImg: companyImgUrl,
       linkedin: linkedIn,
+      companyID,
     };
-    const fd = new FormData();
 
-    // reflection
-    for (let key in alumni) {
-      fd.append(key, alumni[key]);
-    }
     axios
-      .post(`${baseUrl}api/alumni/create`, fd)
+      .post(`${baseUrl}api/alumni/create`, alumni)
       .then(() => {
         setSubmit(false);
         setDis(false);
@@ -41,22 +46,39 @@ const AddModal = ({ dis, setDis }) => {
       });
   };
 
-  const onFileChange = (evt) => {
-    setImage(evt.target.files[0]);
-    console.log(evt.target.files[0]);
+  const uploadImage = async (img, ptype) => {
+    setBtn(true);
+    if (!img) {
+      alert("No Image Uploaded");
+      return;
+    }
+    // ptype ? setImage(img) : setCompanyImg(img);
+    try {
+      const storageRef = ptype ? ref(storage, "alumni/" + img.name) : ref(storage, "company/" + img.name);
+      await uploadBytes(storageRef, img); // Upload the image
+      const imageUrl = await getDownloadURL(storageRef); // Get the URL of the uploaded image
+      ptype ? setImageUrl(imageUrl) : setCompanyImgUrl(imageUrl);
+      setTimeout(() => setBtn(false), 2000);
+    } catch (error) {
+      console.error(error);
+    }
   };
+
+  useEffect(() => {
+    axios
+      .get(`${baseUrl}api/company`)
+      .then((res) => setCompanies(res.data))
+      .catch((err) => console.error(err));
+  }, []);
 
   return (
     <>
       <div
-        id="authentication-modal"
-        tabindex="-1"
-        aria-hidden="true"
         className={`${
           dis ? null : "hidden"
         } transition-all ease-in-out fixed top-0 bg-gray-600 bg-opacity-80 left-0 right-0 z-50 w-full p-4 overflow-x-hidden overflow-y-auto inset-0 items-center h-full max-h-full`}
       >
-        <div class="relative top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md max-h-full transition-all">
+        <div class="relative top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[50%] max-h-full transition-all">
           <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
             <button
               type="button"
@@ -69,119 +91,147 @@ const AddModal = ({ dis, setDis }) => {
               <span className="sr-only">Close modal</span>
             </button>
             <div className="px-6 py-6 lg:px-8">
-              <h3 className="mb-4 text-xl font-medium text-gray-900 dark:text-white">Add A New Alumni</h3>
+              <h3 className="mb-4 text-xl font-medium text-blue-300">Add A New Alumni</h3>
               <form className="space-y-6" action="#">
-                <div>
-                  <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                    Student Name
-                  </label>
-                  <input
-                    type="text"
-                    onChange={(e) => setCompany(e.target.value)}
-                    value={company}
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                    placeholder="John Doe"
-                    required
-                  />
+                <div className="flex gap-5 w-full">
+                  <div className="w-1/2">
+                    <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                      Student Name
+                    </label>
+                    <input
+                      type="text"
+                      onChange={(e) => setName(e.target.value)}
+                      value={name}
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                      placeholder="John Doe"
+                      required
+                    />
+                  </div>
+                  <div className="w-1/2">
+                    <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                      Course
+                    </label>
+                    <input
+                      type="text"
+                      onChange={(e) => setCourse(e.target.value)}
+                      value={course}
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                      placeholder="AWS/DevOps"
+                      required
+                    />
+                  </div>
                 </div>
-                <div>
-                  <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                    Company Name
-                  </label>
-                  <input
-                    type="text"
-                    onChange={(e) => setName(e.target.value)}
-                    value={name}
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                    placeholder="XYZ Inc"
-                    required
-                  />
+                <div className="flex gap-5 w-full">
+                  <div className="w-full">
+                    <label for="companies" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                      Select an Existing Company
+                    </label>
+                    <select
+                      id="companies"
+                      onChange={(e) => setCompanyID(e.target.value)}
+                      class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    >
+                      <option selected>Choose a Company</option>
+                      {companies.map((cmp, i) => (
+                        <option value={cmp._id} key={i}>
+                          {cmp.companyName}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
-                <div>
-                  <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                    Course
-                  </label>
-                  <input
-                    type="text"
-                    onChange={(e) => setCourse(e.target.value)}
-                    value={course}
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                    placeholder="AWS/DevOps"
-                    required
-                  />
+                <div className="flex w-full gap-5">
+                  <div className="w-1/2">
+                    <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                      Company Name
+                    </label>
+                    <input
+                      type="text"
+                      onChange={(e) => setCompany(e.target.value)}
+                      value={company}
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                      placeholder={!companyID ? "XYZ" : "Disabled"}
+                      required
+                      disabled={companyID}
+                    />
+                  </div>
+                  <div className="w-1/2">
+                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="rating">
+                      Position
+                    </label>
+                    <input
+                      type="text"
+                      onChange={(e) => setPosition(e.target.value)}
+                      value={position}
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                      placeholder="Developer"
+                      required
+                    />
+                  </div>
                 </div>
-                <div>
-                  <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="multiple_files">
-                    Student Image
-                  </label>
-                  <input
-                    class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
-                    id="multiple_files"
-                    type="file"
-                    accept="image/png, image/jpeg, image/jpg"
-                    onChange={(e) => onFileChange(e)}
-                  />
+                <div className="flex gap-5 w-full">
+                  <div className="w-2/3">
+                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="rating">
+                      LinkedIn
+                    </label>
+                    <input
+                      type="text"
+                      onChange={(e) => setLinkedIn(e.target.value)}
+                      value={linkedIn}
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                      placeholder="https://linkedin.com/in/"
+                      required
+                    />
+                  </div>
+                  <div className="w-1/3">
+                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="rating">
+                      Package
+                    </label>
+                    <input
+                      type="text"
+                      onChange={(e) => setPckg(e.target.value)}
+                      value={pckg}
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                      placeholder="6,00,00 LPA"
+                      required
+                    />
+                  </div>
                 </div>
-                <div>
-                  <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="rating">
-                    Position
-                  </label>
-                  <input
-                    type="text"
-                    onChange={(e) => setPosition(e.target.value)}
-                    value={position}
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                    placeholder="Developer"
-                    required
-                  />
-                </div>
-                <div>
-                  <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="rating">
-                    LinkedIn
-                  </label>
-                  <input
-                    type="text"
-                    onChange={(e) => setLinkedIn(e.target.value)}
-                    value={linkedIn}
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                    placeholder="https://linkedin.com/in/"
-                    required
-                  />
-                </div>
-                <div>
-                  <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="rating">
-                    Package
-                  </label>
-                  <input
-                    type="text"
-                    onChange={(e) => setPckg(e.target.value)}
-                    value={pckg}
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                    placeholder="6,00,00 LPA"
-                    required
-                  />
-                </div>
-                <div>
-                  <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="rating">
-                    Company Image (Logo URL)
-                  </label>
-                  <input
-                    type="text"
-                    onChange={(e) => setCompanyImg(e.target.value)}
-                    value={companyImg}
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                    placeholder="https://company.com/logo"
-                    required
-                  />
+                <div className="flex w-full gap-5">
+                  <div>
+                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="multiple_files">
+                      Student Image (250px x 250px)
+                    </label>
+                    <input
+                      class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+                      id="multiple_files"
+                      type="file"
+                      accept="image/png, image/jpeg, image/jpg"
+                      onChange={(e) => uploadImage(e.target.files[0], true)}
+                    />
+                  </div>
+                  <div>
+                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="rating">
+                      Company Image
+                    </label>
+                    <input
+                      class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+                      id="multiple_files"
+                      type="file"
+                      disabled={companyID}
+                      accept="image/png, image/jpeg, image/jpg"
+                      onChange={(e) => uploadImage(e.target.files[0], false)}
+                    />
+                  </div>
                 </div>
               </form>
               <button
-                onClick={() => {
-                  addAlumni();
-                  console.log("hit");
-                }}
+                onClick={addAlumni}
                 type="submit"
-                class="w-full mt-4 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                disabled={btn}
+                className={`w-full mt-4 text-white ${
+                  !btn ? "bg-blue-700" : "bg-gray-600"
+                } hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center`}
               >
                 {submit && (
                   <svg

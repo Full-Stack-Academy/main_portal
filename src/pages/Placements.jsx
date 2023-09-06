@@ -9,7 +9,7 @@ import axios from "axios";
 import EditModal from "../partials/testimonials/EditModal";
 
 const Placements = () => {
-  const [test, setTest] = useState([]);
+  const [place, setPlace] = useState([]);
   const [addDis, setAddDis] = useState(false);
   const [editDis, setEditDis] = useState(false);
   const [testS, setTestS] = useState("");
@@ -20,7 +20,7 @@ const Placements = () => {
     axios
       .get(`${baseUrl}api/alumni/`)
       .then((res) => {
-        setTest(res.data);
+        setPlace(res.data);
         console.log(res.data);
       })
       .catch((e) => {
@@ -43,7 +43,7 @@ const Placements = () => {
           <div className="sm:flex sm:justify-between sm:items-center mb-8">
             {/* Left: Avatars */}
             {/* <DashboardAvatars /> */}
-            <h2 className="text-3xl font-semibold text-slate-800 dark:text-slate-100 mb-2">Testimonials</h2>
+            <h2 className="text-3xl font-semibold text-slate-800 dark:text-slate-100 mb-2">Placements</h2>
 
             {/* Right: Actions */}
             <div className="grid grid-flow-col sm:auto-cols-max justify-start sm:justify-end gap-2">
@@ -80,13 +80,16 @@ const Placements = () => {
                     </div>
                   </th>
                   <th scope="col" className="px-6 py-3">
+                    Image
+                  </th>
+                  <th scope="col" className="px-6 py-3">
                     Name
                   </th>
                   <th scope="col" className="px-6 py-3">
-                    Description
+                    Company
                   </th>
                   <th scope="col" className="px-6 py-3">
-                    Rating
+                    Package
                   </th>
                   <th scope="col" className="px-6 py-3">
                     Priority
@@ -100,8 +103,8 @@ const Placements = () => {
                 </tr>
               </thead>
               <tbody>
-                {test &&
-                  test.map((data, key) => (
+                {place &&
+                  place.map((data, key) => (
                     <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600" key={key}>
                       <td className="w-4 p-4">
                         <div className="flex items-center">
@@ -115,20 +118,15 @@ const Placements = () => {
                           </label>
                         </div>
                       </td>
+                      <td className="px-6 py-4">
+                        <img class="w-10 h-10 rounded-full" src={data.image} alt="Rounded avatar" />
+                      </td>
                       <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                         {data.name}
                       </th>
-                      <td className="px-6 py-4">{data.desc}</td>
-                      <td className="px-6 py-4">{data.rating} / 5</td>
-                      <td className="px-6 py-4">
-                        <span
-                          className={`${data.priority === 2 ? "bg-red-100 text-red-800" : null} ${
-                            data.priority === 1 ? "bg-yellow-300 text-yellow-800" : null
-                          } ${data.priority === 0 ? "bg-green-100 text-green-800" : null}text-xs font-medium mr-2 px-2.5 py-0.5 rounded `}
-                        >
-                          {prior[data.priority]}
-                        </span>
-                      </td>
+                      <td className="px-6 py-4">{data.company.companyName}</td>
+                      <td className="px-6 py-4">{data.package} LPA</td>
+                      <td className="px-6 py-4">{data.course}</td>
                       <td className="px-6 py-4">
                         <span className="font-medium text-blue-600 dark:text-blue-500 hover:underline" onClick={() => openEdit(data)}>
                           Edit
@@ -139,7 +137,7 @@ const Placements = () => {
                       </td>
                     </tr>
                   ))}
-                {!test.length && (
+                {!place.length && (
                   <tr className="justify-center bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                     <td className="w-4 p-4">
                       <div role="status" class="max-w-sm animate-pulse">
@@ -183,6 +181,12 @@ const Placements = () => {
                         <span class="sr-only">Loading...</span>
                       </div>
                     </td>
+                    <td className="px-6 py-4">
+                      <div role="status" class="max-w-sm animate-pulse">
+                        <div class="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-full mb-4"></div>
+                        <span class="sr-only">Loading...</span>
+                      </div>
+                    </td>
                   </tr>
                 )}
               </tbody>
@@ -190,7 +194,7 @@ const Placements = () => {
             <nav className="flex items-center justify-between pt-4" aria-label="Table navigation">
               <span className="text-sm font-normal text-gray-500 dark:text-gray-400">
                 Showing <span className="font-semibold text-gray-900 dark:text-white">1-10</span> of{" "}
-                <span className="font-semibold text-gray-900 dark:text-white">{test.length}</span>
+                <span className="font-semibold text-gray-900 dark:text-white">{place.length}</span>
               </span>
               <ul className="inline-flex -space-x-px text-sm h-8">
                 <li>

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import Sidebar from "./partials/Sidebar";
 import Header from "./partials/Header";
+import "./utils/firebaseConfig";
 
 import "./css/style.css";
 
