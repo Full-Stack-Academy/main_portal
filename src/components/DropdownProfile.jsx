@@ -4,7 +4,7 @@ import Transition from "../utils/Transition";
 
 import UserAvatar from "../images/user-avatar-32.png";
 
-function DropdownProfile({ align }) {
+function DropdownProfile({ align, setIsLoggedIn }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [user, setUser] = useState({});
 
@@ -90,7 +90,7 @@ function DropdownProfile({ align }) {
                 onClick={() => {
                   setDropdownOpen(!dropdownOpen);
                   localStorage.removeItem("token");
-                  window.location.reload();
+                  setIsLoggedIn(false);
                 }}
               >
                 Sign Out

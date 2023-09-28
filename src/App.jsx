@@ -39,11 +39,20 @@ function App() {
           {/* Content area */}
           <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
             {/*  Site header */}
-            <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+            <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} setIsLoggedIn={setIsLoggedIn} />
             <Routes>
               <Route exact path="/" element={<Dashboard />} />
               <Route exact path="/testimonials" element={<Testimonials />} />
               <Route exact path="/placements" element={<Placements />} />
+              <Route
+                exact
+                path="*"
+                element={
+                  <>
+                    <Navigate to="/" />
+                  </>
+                }
+              />
             </Routes>
             {/* <Banner /> */}
           </div>
