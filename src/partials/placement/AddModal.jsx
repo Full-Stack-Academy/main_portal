@@ -91,7 +91,7 @@ const AddModal = ({ dis, setDis }) => {
               <span className="sr-only">Close modal</span>
             </button>
             <div className="px-6 py-6 lg:px-8">
-              <h3 className="mb-4 text-xl font-medium text-blue-300">Add A New Alumni</h3>
+              <h3 className="mb-4 text-xl font-medium text-white">Add A New Alumni</h3>
               <form className="space-y-6" action="#">
                 <div className="flex gap-5 w-full">
                   <div className="w-1/2">
@@ -192,7 +192,7 @@ const AddModal = ({ dis, setDis }) => {
                       onChange={(e) => setPckg(e.target.value)}
                       value={pckg}
                       className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                      placeholder="6,00,00 LPA"
+                      placeholder="6 LPA"
                       required
                     />
                   </div>

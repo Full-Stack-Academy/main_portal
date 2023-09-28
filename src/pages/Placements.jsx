@@ -128,7 +128,10 @@ const Placements = () => {
                       <td className="px-6 py-4">{data.package} LPA</td>
                       <td className="px-6 py-4">{data.course}</td>
                       <td className="px-6 py-4">
-                        <span className="font-medium text-blue-600 dark:text-blue-500 hover:underline" onClick={() => openEdit(data)}>
+                        <span
+                          className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                          // onClick={() => openEdit(data)}
+                        >
                           Edit
                         </span>
                       </td>

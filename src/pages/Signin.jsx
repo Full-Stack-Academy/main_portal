@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import logo from "../images/fsa_logo.svg";
+import logo from "../images/fsa_logo_white.png";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -10,20 +10,29 @@ const Signin = ({ setIsLoggedIn }) => {
   const [valEmail, setValEmail] = useState(false);
   const [valPass, setValPass] = useState(false);
   const [isSubmitting, setSubmitting] = useState(false);
+  const [wrong, setWrong] = useState(false);
   const navigate = useNavigate();
 
   const signin = () => {
     if (email && pass) {
       setSubmitting(true);
-      axios.post(`${baseUrl}api/users/signin`, { email, pass }).then((res) => {
-        if (res.status == 200) {
-          setSubmitting(false);
-          setIsLoggedIn(true);
-          localStorage.setItem("token", res.data.token);
-        } else {
+      axios
+        .post(`${baseUrl}api/users/signin`, { email, pass })
+        .then((res) => {
+          if (res.status == 200) {
+            setSubmitting(false);
+            setIsLoggedIn(true);
+            localStorage.setItem("token", res.data.token);
+            localStorage.setItem("user", JSON.stringify({ name: res.data.name, email: res.data.email }));
+            navigate("/");
+          }
+        })
+        .catch((err) => {
           console.log("Wrong Password");
-        }
-      });
+          setSubmitting(false);
+          setWrong(true);
+          setTimeout(() => setWrong(false), 3000);
+        });
     } else {
       setValEmail(!email);
       setValPass(!pass);
@@ -34,23 +43,23 @@ const Signin = ({ setIsLoggedIn }) => {
     }
   };
 
-  useEffect(() => {
-    const tkn = localStorage.getItem("token");
-    tkn ? navigate("/") : null;
-  }, []);
+  // useEffect(() => {
+  //   const tkn = localStorage.getItem("token");
+  //   tkn ? navigate("/") : null;
+  // }, []);
 
   return (
     <>
-      <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
+      <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8 h-screen">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-          <img className="mx-auto h-14 w-auto dark:hidden" src={logo} alt="FSA" />
-          <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Sign in to your account</h2>
+          <img className="mx-auto h-14 w-auto" src={logo} alt="FSA" />
+          <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-white">Sign in to your account</h2>
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
           <form className="space-y-6" action="#" method="POST">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
+              <label htmlFor="email" className="block text-sm font-medium leading-6 text-white">
                 Email address
               </label>
               <div className="mt-2">
@@ -71,11 +80,11 @@ const Signin = ({ setIsLoggedIn }) => {
 
             <div>
               <div className="flex items-center justify-between">
-                <label htmlFor="password" className="block text-sm font-medium leading-6 text-gray-900">
+                <label htmlFor="password" className="block text-sm font-medium leading-6 text-white">
                   Password
                 </label>
                 <div className="text-sm">
-                  <a href="#" className="font-semibold text-indigo-600 hover:text-indigo-500">
+                  <a href="#" className="font-semibold text-blue-600 hover:text-indigo-500">
                     Forgot password?
                   </a>
                 </div>
@@ -95,7 +104,9 @@ const Signin = ({ setIsLoggedIn }) => {
                 />
               </div>
             </div>
-
+            {wrong && (
+              <p className="w-full text-center text-sm font-semibold leading-6 text-white bg-red-400 py-2 rounded">Wrong Email or Password</p>
+            )}
             <div>
               <button
                 type="button"
@@ -128,12 +139,12 @@ const Signin = ({ setIsLoggedIn }) => {
             </div>
           </form>
 
-          <p className="mt-10 text-center text-sm text-gray-500">
+          {/* <p className="mt-10 text-center text-sm text-gray-500">
             Not a member?
             <Link to="/register" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
               Start a 14 day free trial
             </Link>
-          </p>
+          </p> */}
         </div>
       </div>
     </>
