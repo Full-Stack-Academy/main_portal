@@ -6,7 +6,7 @@ import AddModal from "../partials/placement/AddModal";
 import Banner from "../partials/Banner";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import EditModal from "../partials/testimonials/EditModal";
+import EditModal from "../partials/placement/EditModal";
 
 const Placements = () => {
   const [place, setPlace] = useState([]);
@@ -21,7 +21,6 @@ const Placements = () => {
       .get(`${baseUrl}api/alumni/`)
       .then((res) => {
         setPlace(res.data);
-        console.log(res.data);
       })
       .catch((e) => {
         console.log(e);
@@ -130,7 +129,7 @@ const Placements = () => {
                       <td className="px-6 py-4">
                         <span
                           className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                          // onClick={() => openEdit(data)}
+                          onClick={() => openEdit(data)}
                         >
                           Edit
                         </span>

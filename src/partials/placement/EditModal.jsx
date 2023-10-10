@@ -1,23 +1,46 @@
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { initializeApp } from "firebase/app";
+import "firebase/storage";
+import { firebaseConfig } from "../../utils/firebaseConfig";
+const firebaseApp = initializeApp(firebaseConfig);
+const storage = getStorage(firebaseApp); // Initialize Firebase Storage
 
 const EditModal = ({ dis, setDis, data }) => {
   const [name, setName] = useState(data.name);
-  const [desc, setDesc] = useState(data.desc);
-  const [rating, setRating] = useState(data.rating);
-  const [priority, setPriority] = useState(data.priority);
+  const [course, setCourse] = useState(data.course);
+  const [company, setCompany] = useState("");
+  const [companyID, setCompanyID] = useState(data.company._id);
+  const [linkedIn, setLinkedIn] = useState(data.linkedin);
+  const [position, setPosition] = useState(data.position);
+  const [pckg, setPckg] = useState(data.package);
   const [submit, setSubmit] = useState(false);
+  const [imageUrl, setImageUrl] = useState(null);
+  const [companyImgUrl, setCompanyImgUrl] = useState("");
+  const [companies, setCompanies] = useState([]);
+  const [btn, setBtn] = useState(false)
   const baseUrl = import.meta.env.VITE_API_URL;
 
-  const editTest = () => {
+  const submitEdit = () => {
     setSubmit(true);
+
+    let body = {
+      name,
+      course,
+      linkedin: linkedIn,
+      position,
+      package: pckg,
+    };
+    if (companyID) {
+      body.companyID = companyID;
+    } else {
+      body.company = company;
+      body.companyImg = companyImgUrl;
+    }
+    console.log(data._id)
     axios
-      .patch(`${baseUrl}api/test/${data._id}`, {
-        name,
-        desc,
-        rating,
-        priority,
-      })
+      .patch(`${baseUrl}api/alumni/update/${data._id}`, body)
       .then(() => {
         setSubmit(false);
         setDis(false);
@@ -25,6 +48,31 @@ const EditModal = ({ dis, setDis, data }) => {
       .catch((err) => {
         console.log(err);
       });
+  };
+
+  useEffect(() => {
+    axios
+      .get(`${baseUrl}api/company`)
+      .then((res) => setCompanies(res.data))
+      .catch((err) => console.error(err));
+  }, []);
+
+  const uploadImage = async (img, ptype) => {
+    setBtn(true);
+    if (!img) {
+      alert("No Image Uploaded");
+      return;
+    }
+    // ptype ? setImage(img) : setCompanyImg(img);
+    try {
+      const storageRef = ptype ? ref(storage, "alumni/" + img.name) : ref(storage, "company/" + img.name);
+      await uploadBytes(storageRef, img); // Upload the image
+      const imageUrl = await getDownloadURL(storageRef); // Get the URL of the uploaded image
+      ptype ? setImageUrl(imageUrl) : setCompanyImgUrl(imageUrl);
+      setTimeout(() => setBtn(false), 2000);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -37,7 +85,7 @@ const EditModal = ({ dis, setDis, data }) => {
           dis ? null : "hidden"
         } transition-all ease-in-out fixed top-0 bg-gray-600 bg-opacity-80 left-0 right-0 z-50 w-full p-4 overflow-x-hidden overflow-y-auto inset-0 items-center h-full max-h-full`}
       >
-        <div class="relative top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md max-h-full transition-all">
+        <div class="relative top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[50%] max-h-full transition-all">
           <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
             <button
               type="button"
@@ -50,83 +98,149 @@ const EditModal = ({ dis, setDis, data }) => {
               <span className="sr-only">Close modal</span>
             </button>
             <div className="px-6 py-6 lg:px-8">
-              <h3 className="mb-4 text-xl font-medium text-gray-900 dark:text-white">Add A New Testimonial</h3>
+              <h3 className="mb-4 text-xl font-medium text-gray-900 dark:text-white">Edit Placement</h3>
               <form className="space-y-6" action="#">
-                <div>
-                  <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                    Student Name
-                  </label>
-                  <input
-                    type="text"
-                    onChange={(e) => setName(e.target.value)}
-                    value={name}
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                    placeholder="John Doe"
-                    required
-                  />
+                <div className="flex gap-5 w-full">
+                  <div className="w-1/2">
+                    <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                      Student Name
+                    </label>
+                    <input
+                      type="text"
+                      onChange={(e) => setName(e.target.value)}
+                      value={name}
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                      placeholder="John Doe"
+                      required
+                    />
+                  </div>
+                  <div className="w-1/2">
+                    <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                      Course
+                    </label>
+                    <input
+                      type="text"
+                      onChange={(e) => setCourse(e.target.value)}
+                      value={course}
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                      placeholder="AWS/DevOps"
+                      required
+                    />
+                  </div>
                 </div>
-                <div>
-                  <label for="desc" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                    Description
-                  </label>
-                  <textarea
-                    placeholder="Description"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                    rows={7}
-                    required
-                    value={desc}
-                    onChange={(e) => setDesc(e.target.value)}
-                  />
+                <div className="flex gap-5 w-full">
+                  <div className="w-full">
+                    <label for="companies" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                      Select an Existing Company
+                    </label>
+                    <select
+                      id="companies"
+                      onChange={(e) => (e.target.value === "new" ? setCompanyID("") : setCompanyID(e.target.value))}
+                      class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    >
+                      {companies.map((cmp, i) => (
+                        <option value={cmp._id} selected={cmp._id === data.company._id} key={i}>
+                          {cmp.companyName}
+                        </option>
+                      ))}
+                      <option value={"new"}>New Company</option>
+                    </select>
+                  </div>
                 </div>
-                <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="multiple_files">
-                  Student Image
-                </label>
-                <input
-                  class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
-                  id="multiple_files"
-                  type="file"
-                  accept="image/png, image/jpeg, image/jpg"
-                />
-                <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="rating">
-                  Rating
-                </label>
-                <select
-                  onChange={(e) => setRating(e.target.value)}
-                  value={rating}
-                  id="rating"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                >
-                  <option selected>Choose a Rating</option>
-                  <option value={1}>1</option>
-                  <option value={2}>2</option>
-                  <option value={3}>3</option>
-                  <option value={4}>4</option>
-                  <option value={5}>5</option>
-                </select>
-                <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="rating">
-                  Priority
-                </label>
-                <select
-                  onChange={(e) => setPriority(e.target.value)}
-                  value={priority}
-                  id="priority"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                >
-                  <option selected>Choose a Rating</option>
-                  <option value={2} className="bg-red-100 text-red-800">
-                    High
-                  </option>
-                  <option value={1} className="bg-yellow-300 text-yellow-800">
-                    Medium
-                  </option>
-                  <option value={0} className="bg-green-100 text-green-800">
-                    Low
-                  </option>
-                </select>
+                <div className="flex w-full gap-5">
+                  <div className="w-1/2">
+                    <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                      Company Name
+                    </label>
+                    <input
+                      type="text"
+                      onChange={(e) => setCompany(e.target.value)}
+                      value={company}
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                      placeholder={!companyID ? "XYZ" : "Disabled"}
+                      required
+                      disabled={companyID}
+                    />
+                  </div>
+                  <div className="w-1/2">
+                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="rating">
+                      Position
+                    </label>
+                    <input
+                      type="text"
+                      onChange={(e) => setPosition(e.target.value)}
+                      value={position}
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                      placeholder="Developer"
+                      required
+                    />
+                  </div>
+                </div>
+                <div className="flex gap-5 w-full">
+                  <div className="w-2/3">
+                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="rating">
+                      LinkedIn
+                    </label>
+                    <input
+                      type="text"
+                      onChange={(e) => setLinkedIn(e.target.value)}
+                      value={linkedIn}
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                      placeholder="https://linkedin.com/in/"
+                      required
+                    />
+                  </div>
+                  <div className="w-1/3">
+                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="rating">
+                      Package
+                    </label>
+                    <input
+                      type="text"
+                      onChange={(e) => setPckg(e.target.value)}
+                      value={pckg}
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                      placeholder="6 LPA"
+                      required
+                    />
+                  </div>
+                </div>
+                <div className="flex w-full gap-5">
+                  {false && (
+                    <div>
+                      <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="multiple_files">
+                        Student Image (250px x 250px)
+                      </label>
+                      <input
+                        class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+                        id="multiple_files"
+                        type="file"
+                        accept="image/png, image/jpeg, image/jpg"
+                        onChange={(e) => uploadImage(e.target.files[0], true)}
+                      />
+                    </div>
+                  )}
+                    <div className={
+                      companyID ? 'hidden' : null + 
+                      'transition-all ease-in-out'
+                    }>
+                      <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="rating">
+                        Company Image
+                      </label>
+                      <input
+                        class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+                        id="multiple_files"
+                        type="file"
+                        disabled={companyID}
+                        accept="image/png, image/jpeg, image/jpg"
+                        onChange={(e) => uploadImage(e.target.files[0], false)}
+                      />
+                    </div>
+                </div>
               </form>
               <button
-                onClick={editTest}
+                onClick={submitEdit}
                 type="submit"
+                disabled={btn}
                 class="w-full mt-4 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
               >
                 {submit && (

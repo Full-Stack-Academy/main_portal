@@ -91,7 +91,7 @@ const AddModal = ({ dis, setDis }) => {
               <span className="sr-only">Close modal</span>
             </button>
             <div className="px-6 py-6 lg:px-8">
-              <h3 className="mb-4 text-xl font-medium text-white">Add A New Alumni</h3>
+              <h3 className="mb-4 text-xl font-medium text-black dark:text-white">Add A New Alumni</h3>
               <form className="space-y-6" action="#">
                 <div className="flex gap-5 w-full">
                   <div className="w-1/2">
