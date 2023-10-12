@@ -27,7 +27,7 @@ const AddModal = ({ dis, setDis }) => {
       name,
       image: imageUrl,
       position,
-      package: pckg,
+      package: +pckg,
       company,
       course,
       companyImg: companyImgUrl,

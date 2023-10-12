@@ -19,18 +19,18 @@ const EditModal = ({ dis, setDis, data }) => {
   const [imageUrl, setImageUrl] = useState(null);
   const [companyImgUrl, setCompanyImgUrl] = useState("");
   const [companies, setCompanies] = useState([]);
-  const [btn, setBtn] = useState(false)
+  const [btn, setBtn] = useState(false);
   const baseUrl = import.meta.env.VITE_API_URL;
 
   const submitEdit = () => {
     setSubmit(true);
-
+    console.log(typeof +pckg);
     let body = {
       name,
       course,
       linkedin: linkedIn,
       position,
-      package: pckg,
+      package: +pckg,
     };
     if (companyID) {
       body.companyID = companyID;
@@ -38,7 +38,6 @@ const EditModal = ({ dis, setDis, data }) => {
       body.company = company;
       body.companyImg = companyImgUrl;
     }
-    console.log(data._id)
     axios
       .patch(`${baseUrl}api/alumni/update/${data._id}`, body)
       .then(() => {
@@ -139,7 +138,7 @@ const EditModal = ({ dis, setDis, data }) => {
                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     >
                       {companies.map((cmp, i) => (
-                        <option value={cmp._id} selected={cmp._id === data.company._id} key={i}>
+                        <option value={cmp} selected={cmp._id === data.company._id} key={i}>
                           {cmp.companyName}
                         </option>
                       ))}
@@ -219,22 +218,19 @@ const EditModal = ({ dis, setDis, data }) => {
                       />
                     </div>
                   )}
-                    <div className={
-                      companyID ? 'hidden' : null + 
-                      'transition-all ease-in-out'
-                    }>
-                      <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="rating">
-                        Company Image
-                      </label>
-                      <input
-                        class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
-                        id="multiple_files"
-                        type="file"
-                        disabled={companyID}
-                        accept="image/png, image/jpeg, image/jpg"
-                        onChange={(e) => uploadImage(e.target.files[0], false)}
-                      />
-                    </div>
+                  <div className={companyID ? "hidden" : null + "transition-all ease-in-out"}>
+                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="rating">
+                      Company Image
+                    </label>
+                    <input
+                      class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+                      id="multiple_files"
+                      type="file"
+                      disabled={companyID}
+                      accept="image/png, image/jpeg, image/jpg"
+                      onChange={(e) => uploadImage(e.target.files[0], false)}
+                    />
+                  </div>
                 </div>
               </form>
               <button
