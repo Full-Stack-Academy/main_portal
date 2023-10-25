@@ -258,7 +258,7 @@ const EditModal = ({ dis, setDis, data }) => {
                     />
                   </svg>
                 )}
-                Edit
+                Save
               </button>
             </div>
           </div>

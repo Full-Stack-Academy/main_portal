@@ -90,7 +90,10 @@ const Placements = () => {
                     Package
                   </th>
                   <th scope="col" className="px-6 py-3">
-                    Priority
+                    Position
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    Course
                   </th>
                   <th scope="col" className="px-6 py-3">
                     Edit
@@ -124,6 +127,7 @@ const Placements = () => {
                       </th>
                       <td className="px-6 py-4">{data.company.companyName}</td>
                       <td className="px-6 py-4">{data.package} LPA</td>
+                      <td className="px-6 py-4">{data.position}</td>
                       <td className="px-6 py-4">{data.course}</td>
                       <td className="px-6 py-4">
                         <span className="font-medium text-blue-600 dark:text-blue-500 hover:underline" onClick={() => openEdit(data)}>
