@@ -53,7 +53,7 @@ export default defineConfig({
   css: {
     postcss,
   },
-  plugins: [react(), VitePWA(manifestForPlugIn)],
+  plugins: [react(), VitePWA({ manifest: manifestForPlugIn })],
   resolve: {
     alias: [
       {
