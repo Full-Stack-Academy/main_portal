@@ -1,0 +1,17 @@
+{
+  "display_override": ["minimal-ui", "window-controls-overlay"],
+  "description": "UnDefinedName",
+  "name": "Something",
+  "lang": "en-US",
+  "short_name": "Something",
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#000000",
+  "icons": [
+    {
+      "src": "/something",
+      "sizes": "512x512"
+    }
+  ]
+}
