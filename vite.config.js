@@ -55,45 +55,21 @@ export default defineConfig({
   },
   plugins: [
     react(),
-    // VitePWA({
-    //   manifest: {
-    //     name: "FSA Portal",
-    //     short_name: "fsa_portal",
-    //     description: "FSA Portal App",
-    //     icons: [
-    //       {
-    //         src: "/favicon_io/android-chrome-192x192.png",
-    //         sizes: "192x192",
-    //         type: "image/png",
-    //         purpose: "favicon",
-    //       },
-    //       {
-    //         src: "/favicon_io/android-chrome-192x192.png",
-    //         sizes: "512x512",
-    //         type: "image/png",
-    //         purpose: "favicon",
-    //       },
-    //       {
-    //         src: "/favicon_io/apple-touch-icon.png",
-    //         sizes: "180x180",
-    //         type: "image/png",
-    //         purpose: "apple touch icon",
-    //       },
-    //       {
-    //         src: "/favicon_io/favicon.ico",
-    //         sizes: "512x512",
-    //         type: "image/png",
-    //         purpose: "any maskable",
-    //       },
-    //     ],
-    //     theme_color: "#171717",
-    //     background_color: "#f0e7db",
-    //     display: "standalone",
-    //     scope: "/",
-    //     start_url: "/",
-    //     orientation: "portrait",
-    //   },
-    // }),
+    VitePWA({
+      injectRegister: "auto",
+      manifest: {
+        name: "My Vite PWA",
+        short_name: "VitePWA",
+        description: "My awesome Vite Progressive Web App",
+        start_url: "/",
+        display: "standalone",
+        background_color: "#ffffff",
+        theme_color: "#000000",
+      },
+      devOptions: {
+        enabled: true,
+      },
+    }),
   ],
   resolve: {
     alias: [
@@ -110,4 +86,7 @@ export default defineConfig({
       transformMixedEsModules: true,
     },
   },
+  // server: {
+  //   https: true,
+  // },
 });
