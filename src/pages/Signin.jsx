@@ -94,6 +94,7 @@ const Signin = ({ setIsLoggedIn }) => {
                   id="password"
                   name="password"
                   type="password"
+                  onKeyDown={(e) => e.key === "Enter" ? signin() : null}
                   autocomplete="current-password"
                   value={pass}
                   onChange={(e) => setPass(e.target.value)}
