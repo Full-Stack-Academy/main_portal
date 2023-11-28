@@ -1,5 +1,5 @@
 import { useState } from "react";
-import logo from "../assets/react.svg";
+import logo from "../images/fsa_logo_white.png";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Formik, Form, ErrorMessage, Field } from "formik";
