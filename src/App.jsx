@@ -14,7 +14,7 @@ import Testimonials from "./pages/Testimonials";
 import Signin from "./pages/Signin";
 import Register from "./pages/Register";
 import Placements from "./pages/Placements";
-import Enquiries from "./pages/Enquiries";
+// import Enquiries from "./pages/Enquiries";
 
 function App() {
   const location = useLocation();
@@ -45,7 +45,7 @@ function App() {
               <Route exact path="/" element={<Dashboard />} />
               <Route exact path="/testimonials" element={<Testimonials />} />
               <Route exact path="/placements" element={<Placements />} />
-              <Route exact path="/enquiries" element={<Enquiries />} />
+              {/* <Route exact path="/enquiries" element={<Enquiries />} /> */}
               <Route
                 exact
                 path="*"
