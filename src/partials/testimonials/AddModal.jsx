@@ -7,17 +7,25 @@ const AddModal = ({ dis, setDis }) => {
   const [rating, setRating] = useState(0);
   const [priority, setPriority] = useState(0);
   const [submit, setSubmit] = useState(false);
+  const [image, setImage] = useState(null);
   const baseUrl = import.meta.env.VITE_API_URL;
 
   const addTest = () => {
-    setDesc(true);
+    setSubmit(true);
+    const test = {
+      name,
+      desc,
+      rating,
+      priority,
+      image,
+    };
+    const fd = new FormData();
+
+    for (let key in test) {
+      fd.append(key, test[key]);
+    }
     axios
-      .post(`${baseUrl}api/test/create`, {
-        name,
-        desc,
-        rating,
-        priority,
-      })
+      .post(`${baseUrl}api/test/create`, fd)
       .then(() => {
         setSubmit(false);
         setDis(false);
@@ -79,13 +87,14 @@ const AddModal = ({ dis, setDis }) => {
                   />
                 </div>
                 <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="multiple_files">
-                  Student Image
+                  Student Image (250px x 250px)
                 </label>
                 <input
                   class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
                   id="multiple_files"
                   type="file"
                   accept="image/png, image/jpeg, image/jpg"
+                  onChange={(e) => setImage(e.target.files[0])}
                 />
                 <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="rating">
                   Rating

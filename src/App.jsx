@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
+import { Routes, Route, useLocation, useNavigate, Navigate } from "react-router-dom";
 import Sidebar from "./partials/Sidebar";
 import Header from "./partials/Header";
+import "./utils/firebaseConfig";
 
 import "./css/style.css";
 
@@ -12,12 +13,14 @@ import Dashboard from "./pages/Dashboard";
 import Testimonials from "./pages/Testimonials";
 import Signin from "./pages/Signin";
 import Register from "./pages/Register";
+import Placements from "./pages/Placements";
+import Batches from "./pages/Batches";
+// import Enquiries from "./pages/Enquiries";
 
 function App() {
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const navigate = useNavigate();
 
   useEffect(() => {
     document.querySelector("html").style.scrollBehavior = "auto";
@@ -26,13 +29,7 @@ function App() {
   }, [location.pathname]); // triggered on route change
 
   useEffect(() => {
-    let tkn = localStorage.getItem("token");
-    if (tkn) {
-      setIsLoggedIn(true);
-      navigate("/");
-    } else {
-      navigate("/signin");
-    }
+    localStorage.getItem("token") ? setIsLoggedIn(true) : null;
   }, [isLoggedIn]);
 
   return (
@@ -44,10 +41,22 @@ function App() {
           {/* Content area */}
           <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
             {/*  Site header */}
-            <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+            <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} setIsLoggedIn={setIsLoggedIn} />
             <Routes>
               <Route exact path="/" element={<Dashboard />} />
               <Route exact path="/testimonials" element={<Testimonials />} />
+              <Route exact path="/placements" element={<Placements />} />
+              <Route exact path="/batches" element={<Batches />} />
+              {/* <Route exact path="/enquiries" element={<Enquiries />} /> */}
+              <Route
+                exact
+                path="*"
+                element={
+                  <>
+                    <Navigate to="/" />
+                  </>
+                }
+              />
             </Routes>
             {/* <Banner /> */}
           </div>
@@ -55,7 +64,15 @@ function App() {
       ) : (
         <Routes>
           <Route exact path="/signin" element={<Signin setIsLoggedIn={setIsLoggedIn} />} />
-          <Route exact path="/register" element={<Register />} />
+          <Route
+            exact
+            path="*"
+            element={
+              <>
+                <Navigate to={"/signin"} />
+              </>
+            }
+          />
         </Routes>
       )}
     </>

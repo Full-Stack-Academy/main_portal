@@ -8,18 +8,25 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import EditModal from "../partials/placement/EditModal";
 
-const Placements = () => {
-  const [place, setPlace] = useState([]);
+const Batches = () => {
+  const [batches, setBatches] = useState([]);
   const [addDis, setAddDis] = useState(false);
   const [editDis, setEditDis] = useState(false);
   const [testS, setTestS] = useState("");
   const baseUrl = import.meta.env.VITE_API_URL;
 
+  const disableEnableBatch = (id, current) => {
+    axios
+      .patch(`${baseUrl}api/batch/${id}`, { isActive: !current })
+      .then((res) => console.log(res))
+      .catch((err) => console.error(err));
+  }
+
   useEffect(() => {
     axios
-      .get(`${baseUrl}api/alumni/`)
+      .get(`${baseUrl}api/batch/`)
       .then((res) => {
-        setPlace(res.data);
+        setBatches(res.data);
       })
       .catch((e) => {
         console.log(e);
@@ -41,7 +48,7 @@ const Placements = () => {
           <div className="sm:flex sm:justify-between sm:items-center mb-8">
             {/* Left: Avatars */}
             {/* <DashboardAvatars /> */}
-            <h2 className="text-3xl font-semibold text-slate-800 dark:text-slate-100 mb-2">Placements</h2>
+            <h2 className="text-3xl font-semibold text-slate-800 dark:text-slate-100 mb-2">Batches</h2>
 
             {/* Right: Actions */}
             <div className="grid grid-flow-col sm:auto-cols-max justify-start sm:justify-end gap-2">
@@ -78,22 +85,22 @@ const Placements = () => {
                     </div>
                   </th>
                   <th scope="col" className="px-6 py-3">
-                    Image
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    Name
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    Company
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    Package
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    Position
-                  </th>
-                  <th scope="col" className="px-6 py-3">
                     Course
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    Branch
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    Start Date
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    Batch Time
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    Mode
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    Intake
                   </th>
                   <th scope="col" className="px-6 py-3">
                     Edit
@@ -104,9 +111,9 @@ const Placements = () => {
                 </tr>
               </thead>
               <tbody>
-                {place &&
-                  place.map((data, key) => (
-                    <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600" key={key}>
+                {batches &&
+                  batches.map((data, key) => (
+                    <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 items-center hover:bg-gray-50 dark:hover:bg-gray-600" key={key}>
                       <td className="w-4 p-4">
                         <div className="flex items-center">
                           <input
@@ -120,17 +127,23 @@ const Placements = () => {
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <img class="w-10 h-10 rounded-full" src={data.image} alt="Rounded avatar" />
+                        {/* <img class="w-10 h-10 rounded-full" src={data.image} alt="Rounded avatar" /> */}
+                        {data.course.name}
                       </td>
                       <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                        {data.name}
+                        {data.branch.name}
                       </th>
-                      <td className="px-6 py-4">{data.company.companyName}</td>
-                      <td className="px-6 py-4">{data.package} LPA</td>
-                      <td className="px-6 py-4">{data.position}</td>
-                      <td className="px-6 py-4">{data.course}</td>
+                      <td className="px-6 py-4">{data.startDate}</td>
+                      <td className="px-6 py-4">{data.startTime + " - " + data.endTime}</td>
+                      <td className="px-6 py-4">{data.mode}</td>
+                      <td className="px-6 py-4 flex items-center justify-center">
+                        <label class="relative inline-flex items-center mb-5 cursor-pointer">
+                          <input type="checkbox" checked={data?.isActive} onChange={() => disableEnableBatch(data._id, data?.isActive)} class="sr-only peer" />
+                          <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:w-5 after:h-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                        </label>
+                      </td>
                       <td className="px-6 py-4">
-                        <span className="font-medium text-blue-600 dark:text-blue-500 hover:underline" onClick={() => openEdit(data)}>
+                        <span className="font-medium text-blue-600 dark:text-blue-500 hover:underline">
                           Edit
                         </span>
                       </td>
@@ -139,7 +152,7 @@ const Placements = () => {
                       </td>
                     </tr>
                   ))}
-                {!place.length && (
+                {!batches.length && (
                   <tr className="justify-center bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                     <td className="w-4 p-4">
                       <div role="status" class="max-w-sm animate-pulse">
@@ -196,7 +209,7 @@ const Placements = () => {
             <nav className="flex items-center justify-between pt-4" aria-label="Table navigation">
               <span className="text-sm font-normal text-gray-500 dark:text-gray-400">
                 Showing <span className="font-semibold text-gray-900 dark:text-white">1-10</span> of{" "}
-                <span className="font-semibold text-gray-900 dark:text-white">{place.length}</span>
+                <span className="font-semibold text-gray-900 dark:text-white">{batches.length}</span>
               </span>
               <ul className="inline-flex -space-x-px text-sm h-8">
                 <li>
@@ -266,4 +279,4 @@ const Placements = () => {
   );
 };
 
-export default Placements;
+export default Batches;
