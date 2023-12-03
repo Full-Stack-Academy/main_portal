@@ -20,7 +20,7 @@ const Signin = ({ setIsLoggedIn }) => {
           setSubmitting(false);
           setIsLoggedIn(true);
           localStorage.setItem("token", res.data.token);
-          localStorage.setItem("user", JSON.stringify({ name: res.data.name, email: res.data.email }));
+          localStorage.setItem("user", JSON.stringify({ ...res.data }));
           navigate("/");
         }
       })

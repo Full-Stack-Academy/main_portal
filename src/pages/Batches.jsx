@@ -7,6 +7,7 @@ import Banner from "../partials/Banner";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import EditModal from "../partials/placement/EditModal";
+import moment from "moment/moment";
 
 const Batches = () => {
   const [batches, setBatches] = useState([]);
@@ -20,7 +21,7 @@ const Batches = () => {
       .patch(`${baseUrl}api/batch/${id}`, { isActive: !current })
       .then((res) => console.log(res))
       .catch((err) => console.error(err));
-  }
+  };
 
   useEffect(() => {
     axios
@@ -113,7 +114,10 @@ const Batches = () => {
               <tbody>
                 {batches &&
                   batches.map((data, key) => (
-                    <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 items-center hover:bg-gray-50 dark:hover:bg-gray-600" key={key}>
+                    <tr
+                      className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 justify-center hover:bg-gray-50 dark:hover:bg-gray-600"
+                      key={key}
+                    >
                       <td className="w-4 p-4">
                         <div className="flex items-center">
                           <input
@@ -133,19 +137,22 @@ const Batches = () => {
                       <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                         {data.branch.name}
                       </th>
-                      <td className="px-6 py-4">{data.startDate}</td>
+                      <td className="px-6 py-4">{moment(data.startDate).format("DD-MM-YYYY")}</td>
                       <td className="px-6 py-4">{data.startTime + " - " + data.endTime}</td>
                       <td className="px-6 py-4">{data.mode}</td>
-                      <td className="px-6 py-4 flex items-center justify-center">
-                        <label class="relative inline-flex items-center mb-5 cursor-pointer">
-                          <input type="checkbox" checked={data?.isActive} onChange={() => disableEnableBatch(data._id, data?.isActive)} class="sr-only peer" />
+                      <td className="px-6 py-4 flex items-center content-center justify-center">
+                        <label class="relative in-flex items-center mb-5 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={data?.isActive}
+                            onChange={() => disableEnableBatch(data._id, data?.isActive)}
+                            class="sr-only peer"
+                          />
                           <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:w-5 after:h-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
                         </label>
                       </td>
                       <td className="px-6 py-4">
-                        <span className="font-medium text-blue-600 dark:text-blue-500 hover:underline">
-                          Edit
-                        </span>
+                        <span className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</span>
                       </td>
                       <td className="px-6 py-4">
                         <span className="font-medium text-red-600 dark:text-red-500 hover:underline">Delete</span>
