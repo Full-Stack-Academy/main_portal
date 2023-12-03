@@ -1,6 +1,8 @@
 import resolveConfig from "tailwindcss/resolveConfig";
 import moment from "moment";
 
+let user = JSON.parse(localStorage.getItem("user"));
+
 export const tailwindConfig = () => {
   // Tailwind config
   return resolveConfig("./src/css/tailwind.config.js");
@@ -49,3 +51,11 @@ export function getDayPeriod() {
     return "unknown";
   }
 }
+
+export const isAdmin = () => {
+  return user.role === 0 || user.role === 1;
+};
+
+export const isStaff = () => {
+  return user.role === 0 || user.role === 1 || user.role === 2;
+};
