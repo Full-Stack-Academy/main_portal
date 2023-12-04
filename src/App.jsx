@@ -14,6 +14,8 @@ import Testimonials from "./pages/Testimonials";
 import Signin from "./pages/Signin";
 import Register from "./pages/Register";
 import Placements from "./pages/Placements";
+import Batches from "./pages/Batches";
+import Enquiries from "./pages/Enquiries";
 
 function App() {
   const location = useLocation();
@@ -44,6 +46,8 @@ function App() {
               <Route exact path="/" element={<Dashboard />} />
               <Route exact path="/testimonials" element={<Testimonials />} />
               <Route exact path="/placements" element={<Placements />} />
+              <Route exact path="/batches" element={<Batches />} />
+              <Route exact path="/leads" element={<Enquiries />} />
               <Route
                 exact
                 path="*"

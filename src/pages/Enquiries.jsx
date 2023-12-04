@@ -5,143 +5,161 @@ import Datepicker from "../components/Datepicker";
 import AddModal from "../partials/placement/AddModal";
 import Banner from "../partials/Banner";
 import { useEffect, useState } from "react";
+import moment from "moment";
 import axios from "axios";
 import EditModal from "../partials/placement/EditModal";
 
-const Placements = () => {
-  const [place, setPlace] = useState([]);
+const Enquiries = () => {
+  const [form, setForm] = useState([]);
   const [addDis, setAddDis] = useState(false);
   const [editDis, setEditDis] = useState(false);
   const [testS, setTestS] = useState("");
   const baseUrl = import.meta.env.VITE_API_URL;
 
-  useEffect(() => {
+  const fetchData = () => {
+    setForm([]);
     axios
-      .get(`${baseUrl}api/alumni/`)
+      .get(`${baseUrl}api/forms/`)
       .then((res) => {
-        setPlace(res.data);
+        setForm(res.data);
       })
       .catch((e) => {
         console.log(e);
       });
-  }, [addDis, editDis]);
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const openEdit = (dt) => {
     setTestS(dt);
     setEditDis(true);
   };
 
+  let status = [
+    { title: "NA", color: "text-gray-100" },
+    { title: "Not Decided", color: "text-blue-800" },
+    { title: "Not Interested", color: "text-red-800" },
+    { title: "Will be attending demo", color: "text-yellow-800" },
+    { title: "Scholarship/Zakat Eligible", color: "text-pink-800" },
+    { title: "Attended Demo Class", color: "text-purple-800" },
+    { title: "Enrolled", color: "text-green-800" },
+    { title: "Placement Done", color: "text-indigo-800" },
+  ];
+
   return (
     <>
-      {addDis && <AddModal dis={addDis} setDis={setAddDis} />}
-      {editDis && <EditModal dis={editDis} setDis={setEditDis} data={testS} />}
+      {/* {addDis && <AddModal dis={addDis} setDis={setAddDis} />}
+      {editDis && <EditModal dis={editDis} setDis={setEditDis} data={testS} />} */}
       <main>
         <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
           {/* Dashboard actions */}
-          <div className="sm:flex sm:justify-between sm:items-center mb-8">
+          <div className="sm:flex sm:justify-between sm:items-center mb-4">
             {/* Left: Avatars */}
             {/* <DashboardAvatars /> */}
-            <h2 className="text-3xl font-semibold text-slate-800 dark:text-slate-100 mb-2">Placements</h2>
+            <h2 className="text-3xl font-semibold text-slate-800 dark:text-slate-100 mb-2">Leads ({form.length})</h2>
 
             {/* Right: Actions */}
             <div className="grid grid-flow-col sm:auto-cols-max justify-start sm:justify-end gap-2">
               {/* Filter button */}
-              <FilterButton />
+              {/* <FilterButton /> */}
               {/* Datepicker built with flatpickr */}
-              <Datepicker />
+              {/* <Datepicker /> */}
               {/* Add view button */}
-              <button onClick={() => setAddDis(true)} className="btn bg-indigo-500 hover:bg-indigo-600 text-white">
+              {/* <button onClick={() => setAddDis(true)} className="btn bg-indigo-500 hover:bg-indigo-600 text-white">
                 <svg className="w-4 h-4 fill-current opacity-50 shrink-0" viewBox="0 0 16 16">
                   <path d="M15 7H9V1c0-.6-.4-1-1-1S7 .4 7 1v6H1c-.6 0-1 .4-1 1s.4 1 1 1h6v6c0 .6.4 1 1 1s1-.4 1-1V9h6c.6 0 1-.4 1-1s-.4-1-1-1z" />
                 </svg>
                 <span className="hidden xs:block ml-2">Add New</span>
+              </button> */}
+              <button onClick={fetchData} className="btn bg-indigo-700 hover:bg-indigo-500 text-white">
+                <svg
+                  fill="#fff"
+                  className="w-4 h-4"
+                  version="1.1"
+                  id="Capa_1"
+                  xmlns="http://www.w3.org/2000/svg"
+                  xmlns:xlink="http://www.w3.org/1999/xlink"
+                  viewBox="0 0 489.645 489.645"
+                  xml:space="preserve"
+                >
+                  <g>
+                    <path
+                      d="M460.656,132.911c-58.7-122.1-212.2-166.5-331.8-104.1c-9.4,5.2-13.5,16.6-8.3,27c5.2,9.4,16.6,13.5,27,8.3
+		c99.9-52,227.4-14.9,276.7,86.3c65.4,134.3-19,236.7-87.4,274.6c-93.1,51.7-211.2,17.4-267.6-70.7l69.3,14.5
+		c10.4,2.1,21.8-4.2,23.9-15.6c2.1-10.4-4.2-21.8-15.6-23.9l-122.8-25c-20.6-2-25,16.6-23.9,22.9l15.6,123.8
+		c1,10.4,9.4,17.7,19.8,17.7c12.8,0,20.8-12.5,19.8-23.9l-6-50.5c57.4,70.8,170.3,131.2,307.4,68.2
+		C414.856,432.511,548.256,314.811,460.656,132.911z"
+                    />
+                  </g>
+                </svg>
+                <span className="hidden xs:block ml-2">Refresh</span>
               </button>
             </div>
           </div>
 
           {/* Cards */}
           {/* <div classNameName="flex w-full"> */}
-          <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
-            <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-              <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+          <div className="relative sm:rounded-lg overflow-x-auto shadow-md py-2">
+            <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400 rounded">
+              <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 rounded dark:text-gray-400">
                 <tr>
-                  <th scope="col" className="p-4">
-                    <div className="flex items-center">
-                      <input
-                        id="checkbox-all-search"
-                        type="checkbox"
-                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                      />
-                      <label htmlFor="checkbox-all-search" className="sr-only">
-                        checkbox
-                      </label>
-                    </div>
+                  <th scope="col" className="px-2 py-3">
+                    S.No
                   </th>
-                  <th scope="col" className="px-6 py-3">
-                    Image
-                  </th>
-                  <th scope="col" className="px-6 py-3">
+                  <th scope="col" className="px-2 py-3">
                     Name
                   </th>
-                  <th scope="col" className="px-6 py-3">
-                    Company
+                  <th scope="col" className="px-2 py-3">
+                    Mobile
+                  </th>
+                  <th scope="col" className="px-4 py-3">
+                    Status
                   </th>
                   <th scope="col" className="px-6 py-3">
-                    Package
+                    Branch
                   </th>
-                  <th scope="col" className="px-6 py-3">
-                    Position
+                  <th scope="col" className="px-2 py-3">
+                    Course(s) Interested
                   </th>
-                  <th scope="col" className="px-6 py-3">
-                    Course
+                  <th scope="col" className="px-4 py-3">
+                    Latest Contact
                   </th>
-                  <th scope="col" className="px-6 py-3">
-                    Edit
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    Delete
+                  <th scope="col" className="px-2 py-3">
+                    View
                   </th>
                 </tr>
               </thead>
               <tbody>
-                {place &&
-                  place.map((data, key) => (
-                    <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600" key={key}>
-                      <td className="w-4 p-4">
-                        <div className="flex items-center">
-                          <input
-                            id="checkbox-table-search-1"
-                            type="checkbox"
-                            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                          />
-                          <label htmlFor="checkbox-table-search-1" className="sr-only">
-                            checkbox
-                          </label>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <img class="w-10 h-10 rounded-full" src={data.image} alt="Rounded avatar" />
-                      </td>
-                      <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                {form &&
+                  form.map((data, key) => (
+                    <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700" key={key}>
+                      <td className="px-2 text-center py-4">{key + 1}</td>
+                      <th scope="row" className="px-2 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                         {data.name}
                       </th>
-                      <td className="px-6 py-4">{data.company.companyName}</td>
-                      <td className="px-6 py-4">{data.package} LPA</td>
-                      <td className="px-6 py-4">{data.position}</td>
-                      <td className="px-6 py-4">{data.course}</td>
-                      <td className="px-6 py-4">
-                        <span className="font-medium text-blue-600 dark:text-blue-500 hover:underline" onClick={() => openEdit(data)}>
-                          Edit
-                        </span>
+                      <td className="px-2 py-4">{data.phone}</td>
+                      <td className={`px-4 py-4 font-bold ${status[data?.status]?.color}`}>{status[data?.status]?.title}</td>
+                      <td className="px-6 py-4">{data.leadBranch.name.split("-")[1]}</td>
+                      <td className="px-2 py-4 flex flex-wrap gap-2">
+                        {data.interestedCourse.map((dt, i) => (
+                          <span class="bg-blue-600 text-white text-sm font-medium me-2 px-2.5 py-0.5 rounded" key={i}>
+                            {dt.name}
+                          </span>
+                        ))}
                       </td>
-                      <td className="px-6 py-4">
-                        <span className="font-medium text-red-600 dark:text-red-500 hover:underline">Delete</span>
+                      <td className="px-4 py-4">{moment(data.updatedAt).format("lll")}</td>
+                      <td className="px-2 py-4">
+                        <span className="font-medium text-blue-600 dark:text-blue-500 hover:underline" onClick={() => openEdit(data)}>
+                          View
+                        </span>
                       </td>
                     </tr>
                   ))}
-                {!place.length && (
+                {!form.length && (
                   <tr className="justify-center bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                    <td className="w-4 p-4">
+                    <td className="w-8 p-4">
                       <div role="status" class="max-w-sm animate-pulse">
                         <div class="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-full mb-4"></div>
                         <span class="sr-only">Loading...</span>
@@ -193,10 +211,10 @@ const Placements = () => {
                 )}
               </tbody>
             </table>
-            <nav className="flex items-center justify-between pt-4" aria-label="Table navigation">
+            {/* <nav className="flex items-center justify-between pt-4" aria-label="Table navigation">
               <span className="text-sm font-normal text-gray-500 dark:text-gray-400">
                 Showing <span className="font-semibold text-gray-900 dark:text-white">1-10</span> of{" "}
-                <span className="font-semibold text-gray-900 dark:text-white">{place.length}</span>
+                <span className="font-semibold text-gray-900 dark:text-white">{form.length}</span>
               </span>
               <ul className="inline-flex -space-x-px text-sm h-8">
                 <li>
@@ -257,7 +275,7 @@ const Placements = () => {
                   </a>
                 </li>
               </ul>
-            </nav>
+            </nav> */}
           </div>
           {/* </div> */}
         </div>
@@ -266,4 +284,4 @@ const Placements = () => {
   );
 };
 
-export default Placements;
+export default Enquiries;

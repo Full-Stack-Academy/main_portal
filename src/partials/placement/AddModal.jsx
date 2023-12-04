@@ -52,7 +52,6 @@ const AddModal = ({ dis, setDis }) => {
       alert("No Image Uploaded");
       return;
     }
-    // ptype ? setImage(img) : setCompanyImg(img);
     try {
       const storageRef = ptype ? ref(storage, "alumni/" + img.name) : ref(storage, "company/" + img.name);
       await uploadBytes(storageRef, img); // Upload the image

@@ -90,6 +90,7 @@ function DropdownProfile({ align, setIsLoggedIn }) {
                 onClick={() => {
                   setDropdownOpen(!dropdownOpen);
                   localStorage.removeItem("token");
+                  localStorage.removeItem("user");
                   setIsLoggedIn(false);
                 }}
               >
