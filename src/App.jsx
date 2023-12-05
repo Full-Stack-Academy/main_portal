@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Routes, Route, useLocation, useNavigate, Navigate } from "react-router-dom";
+import {
+  Routes,
+  Route,
+  useLocation,
+  useNavigate,
+  Navigate,
+} from "react-router-dom";
 import Sidebar from "./partials/Sidebar";
 import Header from "./partials/Header";
 import "./utils/firebaseConfig";
@@ -13,6 +19,7 @@ import Dashboard from "./pages/Dashboard";
 import Testimonials from "./pages/Testimonials";
 import Signin from "./pages/Signin";
 import Register from "./pages/Register";
+import EnquiryDetails from "./pages/EnquiryDetails";
 import Placements from "./pages/Placements";
 import Batches from "./pages/Batches";
 import Enquiries from "./pages/Enquiries";
@@ -41,13 +48,18 @@ function App() {
           {/* Content area */}
           <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
             {/*  Site header */}
-            <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} setIsLoggedIn={setIsLoggedIn} />
+            <Header
+              sidebarOpen={sidebarOpen}
+              setSidebarOpen={setSidebarOpen}
+              setIsLoggedIn={setIsLoggedIn}
+            />
             <Routes>
               <Route exact path="/" element={<Dashboard />} />
               <Route exact path="/testimonials" element={<Testimonials />} />
               <Route exact path="/placements" element={<Placements />} />
               <Route exact path="/batches" element={<Batches />} />
               <Route exact path="/leads" element={<Enquiries />} />
+              <Route exact path="/leads/:id" element={<EnquiryDetails />} />
               <Route
                 exact
                 path="*"
@@ -63,7 +75,11 @@ function App() {
         </div>
       ) : (
         <Routes>
-          <Route exact path="/signin" element={<Signin setIsLoggedIn={setIsLoggedIn} />} />
+          <Route
+            exact
+            path="/signin"
+            element={<Signin setIsLoggedIn={setIsLoggedIn} />}
+          />
           <Route
             exact
             path="*"

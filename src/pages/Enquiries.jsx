@@ -8,8 +8,10 @@ import { useEffect, useState } from "react";
 import moment from "moment";
 import axios from "axios";
 import EditModal from "../partials/placement/EditModal";
+import { useNavigate } from "react-router-dom";
 
 const Enquiries = () => {
+  const navigate = useNavigate();
   const [form, setForm] = useState([]);
   const [addDis, setAddDis] = useState(false);
   const [editDis, setEditDis] = useState(false);
@@ -58,7 +60,9 @@ const Enquiries = () => {
           <div className="sm:flex sm:justify-between sm:items-center mb-4">
             {/* Left: Avatars */}
             {/* <DashboardAvatars /> */}
-            <h2 className="text-3xl font-semibold text-slate-800 dark:text-slate-100 mb-2">Leads ({form.length})</h2>
+            <h2 className="text-3xl font-semibold text-slate-800 dark:text-slate-100 mb-2">
+              Leads ({form.length})
+            </h2>
 
             {/* Right: Actions */}
             <div className="grid grid-flow-col sm:auto-cols-max justify-start sm:justify-end gap-2">
@@ -73,7 +77,10 @@ const Enquiries = () => {
                 </svg>
                 <span className="hidden xs:block ml-2">Add New</span>
               </button> */}
-              <button onClick={fetchData} className="btn bg-indigo-700 hover:bg-indigo-500 text-white">
+              <button
+                onClick={fetchData}
+                className="btn bg-indigo-700 hover:bg-indigo-500 text-white"
+              >
                 <svg
                   fill="#fff"
                   className="w-4 h-4"
@@ -134,24 +141,46 @@ const Enquiries = () => {
               <tbody>
                 {form &&
                   form.map((data, key) => (
-                    <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700" key={key}>
+                    <tr
+                      className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700"
+                      key={key}
+                    >
                       <td className="px-2 text-center py-4">{key + 1}</td>
-                      <th scope="row" className="px-2 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                      <th
+                        scope="row"
+                        className="px-2 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                      >
                         {data.name}
                       </th>
                       <td className="px-2 py-4">{data.phone}</td>
-                      <td className={`px-4 py-4 font-bold ${status[data?.status]?.color}`}>{status[data?.status]?.title}</td>
-                      <td className="px-6 py-4">{data.leadBranch.name.split("-")[1]}</td>
+                      <td
+                        className={`px-4 py-4 font-bold ${
+                          status[data?.status]?.color
+                        }`}
+                      >
+                        {status[data?.status]?.title}
+                      </td>
+                      <td className="px-6 py-4">
+                        {data.leadBranch.name.split("-")[1]}
+                      </td>
                       <td className="px-2 py-4 flex flex-wrap gap-2">
                         {data.interestedCourse.map((dt, i) => (
-                          <span class="bg-blue-600 text-white text-sm font-medium me-2 px-2.5 py-0.5 rounded" key={i}>
+                          <span
+                            class="bg-blue-600 text-white text-sm font-medium me-2 px-2.5 py-0.5 rounded"
+                            key={i}
+                          >
                             {dt.name}
                           </span>
                         ))}
                       </td>
-                      <td className="px-4 py-4">{moment(data.updatedAt).format("lll")}</td>
+                      <td className="px-4 py-4">
+                        {moment(data.updatedAt).format("lll")}
+                      </td>
                       <td className="px-2 py-4">
-                        <span className="font-medium text-blue-600 dark:text-blue-500 hover:underline" onClick={() => openEdit(data)}>
+                        <span
+                          className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                          onClick={() => navigate(`/leads/${data._id}`)}
+                        >
                           View
                         </span>
                       </td>
@@ -165,7 +194,10 @@ const Enquiries = () => {
                         <span class="sr-only">Loading...</span>
                       </div>
                     </td>
-                    <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                    <th
+                      scope="row"
+                      className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                    >
                       <div role="status" class="max-w-sm animate-pulse">
                         <div class="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-full mb-4"></div>
                         <span class="sr-only">Loading...</span>
